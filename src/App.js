@@ -3,45 +3,47 @@ import React from "react";
 import Titles from "./components/Titles";
 import Form from "./components/Form";
 import Weather from "./components/Weather";
+//import Name from "./components/Name";
 
-const API_KEY = "3585775f387b0d0cba6c5b3dc41b8167";
 
 class App extends React.Component {
   state = {
-    temperature: undefined,
     city: undefined,
-    country: undefined,
-    humidity: undefined,
-    description: undefined,
+    //stores:[],//start here store[index].name
+    store: undefined,
+    //store2: undefined,
+    //names: [],
+    //launch_date: undefined,store[index].launch_date
+    launch: undefined,
     error: undefined
   }
   getWeather = async (e) => {
     e.preventDefault();
-    const city = e.target.elements.city.value;
-    const country = e.target.elements.country.value;
-    const api_call = await fetch(`http://api.openweathermap.org/data/2.5/weather?q=${city},${country}&appid=${API_KEY}&units=metric`);
+    const zipcode = e.target.elements.zipcode.value;
+    const api_call = await fetch(`https://shipt-zip-code-test-api.herokuapp.com/api/zip_codes/${zipcode}`);
     const data = await api_call.json();
-    if (city && country) {
+    //const names = data.stores.map(p=>p.name);
+    if (zipcode) {
       this.setState({
-        temperature: data.main.temp,
-        city: data.name,
-        country: data.sys.country,
-        humidity: data.main.humidity,
-        description: data.weather[0].description,
+        city: data.metro_name,
+        store:data.stores[0].name,
+        //store2:data.stores[1].name,
+        launch: data.stores[0].launch_date,
+        //names: names,
         error: ""
       });
     } else {
       this.setState({
-        temperature: undefined,
         city: undefined,
-        country: undefined,
-        humidity: undefined,
-        description: undefined,
+        store: undefined,
+        //store2: undefined,
+        launch: undefined,
+       //names: [],
         error: "Please enter the values."
       });
     }
   }
-  render() {
+  render() {  
     return (
       <div>
         <div className="wrapper">
@@ -54,13 +56,12 @@ class App extends React.Component {
                 <div className="col-xs-7 form-container">
                   <Form getWeather={this.getWeather} />
                   <Weather 
-                    temperature={this.state.temperature} 
-                    humidity={this.state.humidity}
                     city={this.state.city}
-                    country={this.state.country}
-                    description={this.state.description}
+                    store ={this.state.store}
+                    launch = {this.state.launch_date}
                     error={this.state.error}
                   />
+                {/* <Name names= {this.state.names}/> */}
                 </div>
               </div>
             </div>
